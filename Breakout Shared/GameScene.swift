@@ -7,6 +7,15 @@
 
 import SpriteKit
 
+#if os(OSX)
+extension SKView {
+    open override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        window?.acceptsMouseMovedEvents = true
+    }
+}
+#endif
+
 class GameScene: SKScene {
     fileprivate var label : SKLabelNode?
     fileprivate var spinnyNode : SKShapeNode?
@@ -40,7 +49,7 @@ class GameScene: SKScene {
         
         guard let frameWidth = self.view?.frame.width else { return }
         
-        self.player = SKShapeNode(rectOf: CGSize(width: frameWidth / 2, height: 50), cornerRadius: 20.0)
+        self.player = SKShapeNode(rectOf: CGSize(width: frameWidth / 2, height: 10), cornerRadius: 5.0)
 
         if let player = player {
             player.lineWidth = 0.0
@@ -107,21 +116,26 @@ extension GameScene {
 extension GameScene {
 
     override func mouseDown(with event: NSEvent) {
-
+        print("Mouse Down")
     }
     
     override func mouseDragged(with event: NSEvent) {
+        print("Mouse dragged")
     }
     
     override func mouseUp(with event: NSEvent) {
+            print("Mouse Up")
     }
     
-    override func mouseMoved(event: NSEvent)
+    override func mouseMoved(with event: NSEvent)
     {
+        print("Mouse movement")
+        let point = event.locationInWindow as CGPoint
+        player?.position.x = point.x - (player?.frame.size.width ?? 0)
         // Get mouse position in scene coordinates
-        let location = event.locationInNode(self)
+//        let location = event.location(in: self)
         // Get node at mouse position
-        let node = self.nodeAtPoint(location)
+//        let node = self.atPoint(location)
       // ...
     }
 }
