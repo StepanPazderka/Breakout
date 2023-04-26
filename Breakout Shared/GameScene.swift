@@ -16,12 +16,10 @@ extension SKView {
 }
 #endif
 
-class GameScene: SKScene {
-    fileprivate var label : SKLabelNode?
-    fileprivate var spinnyNode : SKShapeNode?
+class GameScene: SKScene, SKPhysicsContactDelegate {
+    fileprivate var player: SKShapeNode?
+    fileprivate var ball: SKShapeNode?
     
-    fileprivate var player : SKShapeNode?
-
     class func newGameScene() -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
         guard let scene = SKScene(fileNamed: "GameScene") as? GameScene else {
@@ -36,61 +34,56 @@ class GameScene: SKScene {
     }
     
     func setUpScene() {
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
-        }
-        
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode(rectOf: CGSize(width: w, height: w))
-        
         guard let frameWidth = self.view?.frame.width else { return }
         
         self.player = SKShapeNode(rectOf: CGSize(width: frameWidth / 2, height: 10), cornerRadius: 5.0)
-
-        if let player = player {
+        self.ball = SKShapeNode(circleOfRadius: 10.0)
+        
+        if let player = player, let ball = ball {
             player.lineWidth = 0.0
             player.fillColor = .red
             player.position.y = self.frame.minY + 100
-            self.addChild(player)
+            player.physicsBody = SKPhysicsBody(rectangleOf: player.frame.size)
+            player.physicsBody?.isDynamic = false
+            ball.physicsBody = SKPhysicsBody(circleOfRadius: 10)
+            ball.physicsBody?.restitution = 1.05
+            player.physicsBody?.restitution = 1.05
+            ball.physicsBody?.friction = 0.0
+            ball.physicsBody?.velocity = CGVector(dx: 2.0, dy: 2.0)
+            player.physicsBody?.friction = 0.0
+            ball.physicsBody?.angularDamping = 1.0
+            player.physicsBody?.angularDamping = 1.0
+            ball.fillColor = .white
+            player.physicsBody?.categoryBitMask = 0x2
+            player.physicsBody?.contactTestBitMask = 0x1
             
+            self.addChild(player)
+            self.addChild(ball)
         }
+        physicsWorld.contactDelegate = self
         
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 4.0
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
-        }
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        print("Contact \(Date())")
     }
     
     override func didMove(to view: SKView) {
         self.setUpScene()
     }
-
-    func makeSpinny(at pos: CGPoint, color: SKColor) {
-        if let spinny = self.spinnyNode?.copy() as! SKShapeNode? {
-            spinny.position = pos
-            spinny.strokeColor = color
-            self.addChild(spinny)
-        }
-    }
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+
     }
 }
 
 #if os(iOS) || os(tvOS)
 // Touch-based event handling
 extension GameScene {
-
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
+        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -100,21 +93,21 @@ extension GameScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-
+        
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-
+        
     }
     
-   
+    
 }
 #endif
 
 #if os(OSX)
 // Mouse-based event handling
 extension GameScene {
-
+    
     override func mouseDown(with event: NSEvent) {
         print("Mouse Down")
     }
@@ -124,7 +117,7 @@ extension GameScene {
     }
     
     override func mouseUp(with event: NSEvent) {
-            print("Mouse Up")
+        print("Mouse Up")
     }
     
     override func mouseMoved(with event: NSEvent)
@@ -133,10 +126,10 @@ extension GameScene {
         let point = event.locationInWindow as CGPoint
         player?.position.x = point.x - (player?.frame.size.width ?? 0)
         // Get mouse position in scene coordinates
-//        let location = event.location(in: self)
+        //        let location = event.location(in: self)
         // Get node at mouse position
-//        let node = self.atPoint(location)
-      // ...
+        //        let node = self.atPoint(location)
+        // ...
     }
 }
 #endif

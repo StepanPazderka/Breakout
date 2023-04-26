@@ -33,6 +33,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7F0392CF29F9935700344115 /* Breakout-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Breakout-iOS-Info.plist"; sourceTree = SOURCE_ROOT; };
 		7F60FA6629F92C5000A02CC4 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		7F60FA6729F92C5000A02CC4 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		7F60FA6829F92C5000A02CC4 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -114,6 +115,7 @@
 		7F60FA7029F92C5200A02CC4 /* Breakout iOS */ = {
 			isa = PBXGroup;
 			children = (
+				7F0392CF29F9935700344115 /* Breakout-iOS-Info.plist */,
 				7F60FA7129F92C5200A02CC4 /* AppDelegate.swift */,
 				7F60FA7329F92C5200A02CC4 /* GameViewController.swift */,
 				7F60FA7529F92C5200A02CC4 /* Main.storyboard */,
@@ -472,6 +474,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3HV23S92WL;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Breakout-iOS-Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -502,6 +505,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3HV23S92WL;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Breakout-iOS-Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
