@@ -8,12 +8,11 @@
 import SpriteKit
 
 class GameScene: SKScene {
-    
-    
     fileprivate var label : SKLabelNode?
     fileprivate var spinnyNode : SKShapeNode?
-
     
+    fileprivate var player : SKShapeNode?
+
     class func newGameScene() -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
         guard let scene = SKScene(fileNamed: "GameScene") as? GameScene else {
@@ -37,7 +36,19 @@ class GameScene: SKScene {
         
         // Create shape node to use during mouse interaction
         let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
+        self.spinnyNode = SKShapeNode(rectOf: CGSize(width: w, height: w))
+        
+        guard let frameWidth = self.view?.frame.width else { return }
+        
+        self.player = SKShapeNode(rectOf: CGSize(width: frameWidth / 2, height: 50), cornerRadius: 20.0)
+
+        if let player = player {
+            player.lineWidth = 0.0
+            player.fillColor = .red
+            player.position.y = self.frame.minY + 100
+            self.addChild(player)
+            
+        }
         
         if let spinnyNode = self.spinnyNode {
             spinnyNode.lineWidth = 4.0
@@ -70,31 +81,21 @@ class GameScene: SKScene {
 extension GameScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
-        
-        for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.green)
-        }
+
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.blue)
+            self.player?.position.x = t.location(in: self).x
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.red)
-        }
+
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.red)
-        }
+
     }
     
    
@@ -106,20 +107,23 @@ extension GameScene {
 extension GameScene {
 
     override func mouseDown(with event: NSEvent) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
-        self.makeSpinny(at: event.location(in: self), color: SKColor.green)
+
     }
     
     override func mouseDragged(with event: NSEvent) {
-        self.makeSpinny(at: event.location(in: self), color: SKColor.blue)
     }
     
     override func mouseUp(with event: NSEvent) {
-        self.makeSpinny(at: event.location(in: self), color: SKColor.red)
     }
-
+    
+    override func mouseMoved(event: NSEvent)
+    {
+        // Get mouse position in scene coordinates
+        let location = event.locationInNode(self)
+        // Get node at mouse position
+        let node = self.nodeAtPoint(location)
+      // ...
+    }
 }
 #endif
 
