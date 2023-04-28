@@ -33,11 +33,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         return scene
     }
     
+    func enclosePlayground() {
+        var frame = self.frame
+        frame.size.height += 100
+        frame.origin.y -= 100
+        let borderBody = SKPhysicsBody(edgeLoopFrom: frame)
+        borderBody.friction = 0
+        borderBody.categoryBitMask = 1
+        self.physicsBody = borderBody
+    }
+    
     func setUpScene() {
         guard let frameWidth = self.view?.frame.width else { return }
         
-        self.player = SKShapeNode(rectOf: CGSize(width: frameWidth / 2, height: 10), cornerRadius: 5.0)
-        self.ball = SKShapeNode(circleOfRadius: 10.0)
+        self.player = SKShapeNode(rectOf: CGSize(width: frameWidth / 3, height: 10), cornerRadius: 5.0)
+        self.ball = SKShapeNode(circleOfRadius: 20.0)
+        
         
         if let player = player, let ball = ball {
             player.lineWidth = 0.0
@@ -45,36 +56,71 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             player.position.y = self.frame.minY + 100
             player.physicsBody = SKPhysicsBody(rectangleOf: player.frame.size)
             player.physicsBody?.isDynamic = false
-            ball.physicsBody = SKPhysicsBody(circleOfRadius: 10)
-            ball.physicsBody?.restitution = 1.05
-            player.physicsBody?.restitution = 1.05
-            ball.physicsBody?.friction = 0.0
-            ball.physicsBody?.velocity = CGVector(dx: 2.0, dy: 2.0)
-            player.physicsBody?.friction = 0.0
-            ball.physicsBody?.angularDamping = 1.0
-            player.physicsBody?.angularDamping = 1.0
+            player.name = "Player"
+
+            ball.physicsBody = SKPhysicsBody(circleOfRadius: 20)
             ball.fillColor = .white
-            player.physicsBody?.categoryBitMask = 0x2
-            player.physicsBody?.contactTestBitMask = 0x1
+            ball.physicsBody?.friction = 0.0
+            ball.physicsBody?.linearDamping = 0.0
+            ball.physicsBody?.angularDamping = 0.0
+            ball.physicsBody?.restitution = 1.0
+            ball.physicsBody?.affectedByGravity = false
+            ball.physicsBody?.mass = 0.0
+            ball.name = "Ball"
+
+            ball.physicsBody?.contactTestBitMask = 0x1
             
             self.addChild(player)
             self.addChild(ball)
+                
+            ball.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: 1000.0))
         }
         physicsWorld.contactDelegate = self
-        
-        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
-        print("Contact \(Date())")
+        var contactNodes = [SKNode]()
+        if let nodA = contact.bodyA.node, let nodeB = contact.bodyB.node {
+            contactNodes.append(nodA)
+            contactNodes.append(nodeB)
+        }
+        
+        var bodies = [contact.bodyA, contact.bodyB]
+        
+        var edgeLoop = bodies.first(where: { $0.categoryBitMask == 1 })
+
+        if let edgeLoop {
+            print("Wall was hit")
+            if contact.contactPoint.y < -(frame.height / 2) {
+                var gameOverLabel = SKLabelNode(text: "Game Over")
+                gameOverLabel.fontSize = 80.0
+                gameOverLabel.fontColor = NSColor.white
+                scene?.addChild(gameOverLabel)
+                scene?.view?.isPaused = true
+            }
+        }
+        
+        var ballNode = contactNodes.first(where: { $0.name == "Ball" })
+        var PlayerNode = contactNodes.first(where: { $0.name == "Player" })
+        
+        if let ballNode, let PlayerNode {
+            print(contact.contactNormal)
+            let positionDifference = (PlayerNode.position.x - ballNode.position.x)
+            ball?.physicsBody?.applyImpulse(CGVector(dx: -1*(positionDifference*5), dy: 0.0))
+        }
     }
     
     override func didMove(to view: SKView) {
+        self.enclosePlayground()
         self.setUpScene()
     }
     
     override func update(_ currentTime: TimeInterval) {
-
+        if let ball {
+//            print(ball.physicsBody?.velocity)
+//            ball.fillColor = NSColor.init(red: CGFloat.random(in: 0.0...1.0), green: CGFloat.random(in: 0.0...1.0), blue: CGFloat.random(in: 0.0...1.0), alpha: CGFloat.random(in: 0.0...1.0))
+            ball.lineWidth = 0.0
+        }
     }
 }
 
@@ -122,9 +168,12 @@ extension GameScene {
     
     override func mouseMoved(with event: NSEvent)
     {
-        print("Mouse movement")
+//        print("Mouse movement")
         let point = event.locationInWindow as CGPoint
-        player?.position.x = point.x - (player?.frame.size.width ?? 0)
+        print(point.x)
+        player?.position.x = point.x - (player?.frame.size.width ?? 0 / 2)
+        print(player?.position.x)
+        
         // Get mouse position in scene coordinates
         //        let location = event.location(in: self)
         // Get node at mouse position
