@@ -7,19 +7,19 @@
 
 import SpriteKit
 
-class GameViewRouter {
+class Router {
 
-    let vc: GameViewController!
+    let viewController: GameViewController!
     
     init(vc: GameViewController) {
-        self.vc = vc
+        self.viewController = vc
     }
     
     func startNewGame() {
-        vc.presentGameView()
+        viewController.presentGameView()
     }
     
     func showMenu() {
-        vc.showMenu()
+        viewController.showMenu()
     }
 }

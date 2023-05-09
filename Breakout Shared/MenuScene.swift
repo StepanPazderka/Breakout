@@ -8,7 +8,7 @@
 import SpriteKit
 
 class MenuScene: SKScene {
-    var router: GameViewRouter?
+    var router: Router?
     
     var gameTitle: SKLabelNode = {
         let label = SKLabelNode(text: "Bouncer")
@@ -26,28 +26,33 @@ class MenuScene: SKScene {
     }()
     
     override func didMove(to view: SKView) {
-        // create a label node
-//        let gameOverLabel = SKLabelNode(fontNamed: "Arial")
         gameTitle.fontSize = 50
         gameTitle.position = CGPoint(x: size.width/2, y: frame.height - 100)
         
         newGameButton.action = { [weak self] in
             self?.router?.startNewGame()
         }
+        
+        newGameButton.onHoverAction = { button in
+            let scaleUpAction = SKAction.scale(by: 1.1, duration: 0.1)
+            button.run(scaleUpAction)
+        }
+        
         newGameButton.position = CGPoint(x: size.width/2, y: gameTitle.position.y - 200)
-        // add the label node to the scene
-        scene?.addChild(gameTitle)
-        scene?.addChild(newGameButton)
     }
 
     override func update(_ currentTime: TimeInterval) {
         // called every frame
     }
     
-    init(size: CGSize, router: GameViewRouter) {
+    init(size: CGSize, router: Router) {
         self.router = router
-        
+
         super.init(size: size)
+        
+        scene?.addChild(gameTitle)
+        scene?.addChild(newGameButton)
+
     }
     
     required init?(coder aDecoder: NSCoder) {

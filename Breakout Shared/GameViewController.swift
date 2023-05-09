@@ -16,24 +16,21 @@ typealias ViewController = UIViewController
 import SpriteKit
 import GameplayKit
 
-
 class GameViewController: ViewController {
     var boolMenuScreen = true
-    var router: GameViewRouter!
+    var router: Router!
     var cgSize: CGSize!
+    lazy var menuScene = MenuScene(size: cgSize, router: router)
+
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         cgSize = self.view.frame.size
-        self.router = GameViewRouter(vc: self)
-        let scene = GameScene(size: cgSize, router: router)
-        let menu = MenuScene(size: cgSize, router: router)
+        self.router = Router(vc: self)
         let skView = self.view as! SKView
-        
-        skView.presentScene(menu)
+        skView.presentScene(menuScene)
         boolMenuScreen = true
-        
 #if os(OSX)
         // Create a new tracking area for the SKView
         let trackingArea = NSTrackingArea(rect: skView.bounds, options: [.mouseEnteredAndExited, .activeAlways], owner: self, userInfo: nil)
@@ -47,6 +44,10 @@ class GameViewController: ViewController {
     
 #if os(OSX)
     // Add a mouseEntered and mouseExited event handler to the SKView
+    override func mouseMoved(with event: NSEvent) {
+        print("Mouse in window")
+    }
+    
     override func mouseEntered(with event: NSEvent) {
         if boolMenuScreen {
             NSCursor.unhide()
@@ -61,17 +62,14 @@ class GameViewController: ViewController {
 #endif
     
     func presentGameView() {
-        let scene = GameScene(size: cgSize, router: router)
         let skView = self.view as! SKView
-        
-        skView.presentScene(scene)
+        let newGameScene = GameScene(size: cgSize, router: router)
+        skView.presentScene(newGameScene)
     }
     
     func showMenu() {
-        let menu = MenuScene(size: cgSize, router: router)
         let skView = self.view as! SKView
-        
-        skView.presentScene(menu)
+        skView.presentScene(menuScene)
     }
 }
 
