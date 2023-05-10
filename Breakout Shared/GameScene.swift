@@ -29,7 +29,7 @@ class GameScene: SKScene {
         return label
     }()
     
-    let rows = 2
+    let rows = 1
     let columns = 10
     
     var blocks: [SKShapeNode] = [SKShapeNode]()
@@ -54,6 +54,8 @@ class GameScene: SKScene {
         for block in blocks {
             scene?.addChild(block)
         }
+        
+        scene?.addChild(gameWon)
     }
     
     func setupGameOverScreen() {
@@ -130,6 +132,15 @@ class GameScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         ball.yScale = CGFloat(1)
         ball.lineWidth = 0.0
+        
+        if blocks.isEmpty {
+            gameWon.isHidden = false
+            gameWon.position = CGPoint(x: frame.midX, y: frame.midY)
+            scene?.isPaused = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.router.showMenu()
+            }
+        }
     }
     
 #if os(OSX)
@@ -175,7 +186,6 @@ extension GameScene: SKPhysicsContactDelegate {
         let ballNode = contactNodes.first(where: { $0.name == "Ball" })
         let PlayerNode = contactNodes.first(where: { $0.name == "Player" })
         let blockNode = contactNodes.first(where: { $0.name == "Block" })
-        let GameOver = contactNodes.first(where: { $0.name == "GameOver" })
         let Walls = contactNodes.first(where: { $0.name == "Walls" })
         
         if let Walls {
@@ -186,6 +196,13 @@ extension GameScene: SKPhysicsContactDelegate {
         
         if let ballNode, let blockNode {
             blockNode.removeFromParent()
+            let currentBlock = blocks.first(where: {$0 == blockNode})
+            if let currentBlock {
+                blocks.removeAll { node in
+                    node == currentBlock
+                }
+            }
+            print(currentBlock)
         }
     }
 }
