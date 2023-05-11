@@ -12,7 +12,7 @@ class MenuScene: SKScene {
     
     var gameTitle: SKLabelNode = {
         let label = SKLabelNode(text: "Bouncer")
-        label.fontSize = 80.0
+        label.fontSize = 100.0
         label.fontColor = .white
         label.isHidden = false
         return label
@@ -20,15 +20,15 @@ class MenuScene: SKScene {
     
     var newGameButton: SKButton = {
         let newGameButton = SKButton(text: "New Game")
-        newGameButton.fontSize = 50.0
-        newGameButton.fontColor = .blue
+        newGameButton.fontSize = 40.0
+        newGameButton.fontColor = .red
         return newGameButton
     }()
     
     override func didMove(to view: SKView) {
         gameTitle.fontSize = 50
-        gameTitle.position = CGPoint(x: size.width/2, y: frame.height - 100)
-        
+        gameTitle.position = CGPoint(x: size.width/2, y: frame.height - 150)
+        self.backgroundColor = .lightGray
         newGameButton.action = { [weak self] in
             self?.router?.startNewGame()
         }
@@ -38,7 +38,7 @@ class MenuScene: SKScene {
             button.run(scaleUpAction)
         }
         
-        newGameButton.position = CGPoint(x: size.width/2, y: gameTitle.position.y - 200)
+        newGameButton.position = CGPoint(x: size.width/2, y: frame.midY)
     }
 
     override func update(_ currentTime: TimeInterval) {

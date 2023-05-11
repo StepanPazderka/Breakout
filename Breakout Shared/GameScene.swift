@@ -15,7 +15,7 @@ class GameScene: SKScene {
     
     var gameOverLabel: SKLabelNode = {
         let label = SKLabelNode(text: "Game Over")
-        label.fontSize = 80.0
+        label.fontSize = 50.0
         label.fontColor = .white
         label.isHidden = true
         return label
@@ -23,7 +23,7 @@ class GameScene: SKScene {
 
     var gameWon: SKLabelNode = {
         let label = SKLabelNode(text: "Game Won!")
-        label.fontSize = 80.0
+        label.fontSize = 50.0
         label.fontColor = .white
         label.isHidden = true
         return label
@@ -84,7 +84,7 @@ class GameScene: SKScene {
     }
     
     func enclosePlayground() {
-        var wallsNode = SKNode()
+        let wallsNode = SKNode()
         var playgroundFrame = self.frame
         playgroundFrame.size.height += 100
         playgroundFrame.origin.y -= 100
@@ -114,10 +114,11 @@ class GameScene: SKScene {
         setupGameOverScreen()
         self.player = Player()
         self.addChild(ball)
-        
+        self.backgroundColor = .lightGray
         ball.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: -frame.height * 1.5))
         ball.position = CGPoint(x: frame.midX, y: frame.midY)
         player.position.x = frame.midX
+        player.position.y = frame.minY + 50
         self.addChild(player)
         
         physicsWorld.contactDelegate = self

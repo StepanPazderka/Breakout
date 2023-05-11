@@ -12,11 +12,12 @@ class Ball: SKShapeNode {
         super.init()
 
         let sphere = SKShapeNode(ellipseOf: CGSize(width: 30, height: 30))
-        sphere.fillColor = .white
+        sphere.fillColor = .red
+        sphere.strokeColor = .red
 //        let path = CGPath(ellipseIn: CGRect(x: -15, y: -15, width: 30, height: 30), transform: nil)
         self.addChild(sphere)
         self.path = path
-        self.fillColor = .white
+        self.fillColor = .red
         self.position = CGPoint(x: frame.midX, y: frame.midY)
         self.name = "Ball"
         self.physicsBody = SKPhysicsBody(circleOfRadius: 15, center: self.frame.origin)

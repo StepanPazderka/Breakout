@@ -22,7 +22,6 @@ class GameViewController: ViewController {
     var cgSize: CGSize!
     lazy var menuScene = MenuScene(size: cgSize, router: router)
 
-    
     override func viewDidLoad() {
         
         super.viewDidLoad()
