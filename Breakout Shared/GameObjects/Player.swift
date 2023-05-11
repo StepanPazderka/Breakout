@@ -8,21 +8,21 @@
 import SpriteKit
 
 class Player: SKNode {
-    let size = CGSize(width: 200, height: 20)
+    let size = CGSize(width: 200, height: 10)
     
     override init() {
         super.init()
         
-        let shape = SKShapeNode(rectOf: size, cornerRadius: 10)
+        let shape = SKShapeNode(rectOf: size, cornerRadius: 5)
         shape.fillColor = .red
         shape.lineWidth = 0.0
         self.addChild(shape)
         self.name = "Player"
         self.position = CGPoint(x: frame.midX, y: frame.midY + 20)
-        
         self.physicsBody = SKPhysicsBody(rectangleOf: size)
         self.physicsBody?.collisionBitMask = 0x1 << 1
-        self.physicsBody?.categoryBitMask = 0x1 << 1
+        self.physicsBody?.categoryBitMask = 0x1 << 2
+        self.physicsBody?.mass = 0.0
         self.physicsBody?.isDynamic = false
         self.physicsBody?.allowsRotation = false
     }

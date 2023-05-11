@@ -24,9 +24,9 @@ class Block: SKShapeNode {
         self.fillColor = randomColor()
         self.lineWidth = 0.0
         self.name = "Block"
+//        self.physicsBody = SKPhysicsBody(rectangleOf: size)
         self.physicsBody?.categoryBitMask = 0x1 << 3
-        self.physicsBody?.isDynamic = false
-        self.physicsBody = SKPhysicsBody(rectangleOf: size)
+        self.physicsBody?.allowsRotation = false
         self.physicsBody?.isDynamic = false
     }
     

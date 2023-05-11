@@ -29,23 +29,24 @@ class GameScene: SKScene {
         return label
     }()
     
-    let rows = 1
-    let columns = 10
+    let numberOfRows = 1
+    let numberOfColumns = 10
     
     var blocks: [SKShapeNode] = [SKShapeNode]()
     
     func setupBlocks() {
-        let blockSide = frame.width / CGFloat(columns)
+        let blockSide = frame.width / CGFloat(numberOfColumns)
         let padding = frame.width / blockSide
         let blockSize = CGSize(width: blockSide - padding, height: blockSide - padding)
         
-        for row in 1...rows {
+        for row in 1...numberOfRows {
             print(row)
-            for column in 1...columns {
+            for column in 1...numberOfColumns {
                 let block = Block(size: blockSize)
                 let rowOffset = block.frame.width * CGFloat(row) + 20
                 block.position.x = (padding * CGFloat(column) - (padding / 2)) + frame.minX + ((block.frame.width * CGFloat(column)) - block.frame.width)
                 block.position.y = frame.maxY - block.frame.size.height - (self.view?.safeAreaInsets.top ?? 0.0) - (rowOffset) + ((padding * 2) / CGFloat(row))
+                block.physicsBody = SKPhysicsBody(rectangleOf: blockSize)
                 blocks.append(block)
                 block.setupPhysicalBody()
             }
@@ -114,7 +115,7 @@ class GameScene: SKScene {
         self.player = Player()
         self.addChild(ball)
         
-        ball.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: 1000.0))
+        ball.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: -frame.height * 1.5))
         ball.position = CGPoint(x: frame.midX, y: frame.midY)
         player.position.x = frame.midX
         self.addChild(player)
@@ -192,6 +193,11 @@ extension GameScene: SKPhysicsContactDelegate {
             if contact.contactPoint.y < 30 {
                 showGameOverScreen(value: true)
             }
+        }
+        
+        if let ballNode, let PlayerNode {
+            print("Contact")
+            ballNode.physicsBody?.applyImpulse(CGVector(dx: (ballNode.position.x - PlayerNode.position.x)*2, dy: 0.0))
         }
         
         if let ballNode, let blockNode {
