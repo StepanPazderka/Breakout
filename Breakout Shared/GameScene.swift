@@ -32,7 +32,7 @@ class GameScene: SKScene {
     let numberOfRows = 1
     let numberOfColumns = 10
     
-    var blocks: [SKShapeNode] = [SKShapeNode]()
+    var blocks: [SKNode] = [SKNode]()
     
     func setupBlocks() {
         let blockSide = frame.width / CGFloat(numberOfColumns)
@@ -42,10 +42,17 @@ class GameScene: SKScene {
         for row in 1...numberOfRows {
             print(row)
             for column in 1...numberOfColumns {
-                let block = Block(size: blockSize)
+                let width = frame.width / (CGFloat(numberOfColumns) + 1.0)
+                let block = Block(size: CGSize(width: width, height: width))
+                
+                let padding = width / CGFloat(numberOfColumns)
+                
+                block.position.x = (((padding+width)*CGFloat(column)) - width/2) - (padding/2)
+                block.position.y = frame.maxY - (view?.safeAreaInsets.top ?? 0) - (frame.height/30)
+                
                 let rowOffset = block.frame.width * CGFloat(row) + 20
-                block.position.x = (padding * CGFloat(column) - (padding / 2)) + frame.minX + ((block.frame.width * CGFloat(column)) - block.frame.width)
-                block.position.y = frame.maxY - block.frame.size.height - (self.view?.safeAreaInsets.top ?? 0.0) - (rowOffset) + ((padding * 2) / CGFloat(row))
+//                block.position.x = (padding*4) + (padding * CGFloat(column) - (padding / 2)) + frame.minX + ((blockSize.height * CGFloat(column)) - blockSize.height)
+//                block.position.y = frame.maxY - blockSize.height - (self.view?.safeAreaInsets.top ?? 0.0) - (rowOffset) + ((padding * 2) / CGFloat(row))
                 block.physicsBody = SKPhysicsBody(rectangleOf: blockSize)
                 blocks.append(block)
                 block.setupPhysicalBody()
